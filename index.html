@@ -51,54 +51,6 @@
     <!-- Main Container -->
     <main class="main-content">
 
-        <!-- Top Statistics / KPI Dashboard -->
-        <section class="stats-grid">
-            <div class="stat-card card-blue">
-                <div class="stat-header">
-                    <span class="stat-title">إجمالي المشتريات</span>
-                    <div class="stat-icon"><i class="fa-solid fa-cart-shopping"></i></div>
-                </div>
-                <div class="stat-value" id="kpiTotalPurchases">0.00 ج.م</div>
-                <div class="stat-sub">تكلفة البضاعة في المخزن</div>
-            </div>
-
-            <div class="stat-card card-purple">
-                <div class="stat-header">
-                    <span class="stat-title">إجمالي المبيعات المحققة</span>
-                    <div class="stat-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
-                </div>
-                <div class="stat-value" id="kpiTotalSales">0.00 ج.م</div>
-                <div class="stat-sub" id="kpiTotalSoldUnits">باعت 0 قطعة حتى الآن</div>
-            </div>
-
-            <div class="stat-card card-green" id="kpiProfitCard">
-                <div class="stat-header">
-                    <span class="stat-title">صافي الأرباح المحققة</span>
-                    <div class="stat-icon"><i class="fa-solid fa-chart-line"></i></div>
-                </div>
-                <div class="stat-value" id="kpiNetProfit">0.00 ج.م</div>
-                <div class="stat-sub" id="kpiProfitMargin">هامش ربح: 0%</div>
-            </div>
-
-            <div class="stat-card card-amber">
-                <div class="stat-header">
-                    <span class="stat-title">الأصناف بالمخزن</span>
-                    <div class="stat-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
-                </div>
-                <div class="stat-value" id="kpiTotalItemsCount">0</div>
-                <div class="stat-sub" id="kpiRemainingPieces">المتبقي: 0 قطعة</div>
-            </div>
-
-            <div class="stat-card card-rose">
-                <div class="stat-header">
-                    <span class="stat-title">تنبيه النواقص</span>
-                    <div class="stat-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
-                </div>
-                <div class="stat-value" id="kpiLowStockCount">0</div>
-                <div class="stat-sub">أصناف أوشكت على النفاد</div>
-            </div>
-        </section>
-
         <!-- Main Navigation Tabs -->
         <div class="tabs-nav">
             <button class="tab-btn active" data-tab="tab-inventory">
@@ -113,7 +65,7 @@
             </button>
             <button class="tab-btn" data-tab="tab-analytics">
                 <i class="fa-solid fa-chart-pie"></i>
-                <span>تقرير الشركات والموردين والخصومات</span>
+                <span>التحليلات والأرباح (Analysis)</span>
             </button>
         </div>
 
@@ -279,8 +231,56 @@
             </div>
         </section>
 
-        <!-- TAB 3: SUPPLIERS & PERFORMANCE ANALYTICS -->
+        <!-- TAB 3: SUPPLIERS & PERFORMANCE ANALYTICS (ANALYSIS) -->
         <section class="tab-pane" id="tab-analytics">
+            <!-- Top Statistics / KPI Dashboard (خاص بصفحة التحليلات لحماية سرية الأرباح والمبيعات) -->
+            <section class="stats-grid">
+                <div class="stat-card card-blue">
+                    <div class="stat-header">
+                        <span class="stat-title">إجمالي المشتريات</span>
+                        <div class="stat-icon"><i class="fa-solid fa-cart-shopping"></i></div>
+                    </div>
+                    <div class="stat-value" id="kpiTotalPurchases">0.00 ج.م</div>
+                    <div class="stat-sub">تكلفة البضاعة في المخزن</div>
+                </div>
+
+                <div class="stat-card card-purple">
+                    <div class="stat-header">
+                        <span class="stat-title">إجمالي المبيعات المحققة</span>
+                        <div class="stat-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+                    </div>
+                    <div class="stat-value" id="kpiTotalSales">0.00 ج.م</div>
+                    <div class="stat-sub" id="kpiTotalSoldUnits">باعت 0 قطعة حتى الآن</div>
+                </div>
+
+                <div class="stat-card card-green" id="kpiProfitCard">
+                    <div class="stat-header">
+                        <span class="stat-title">صافي الأرباح المحققة</span>
+                        <div class="stat-icon"><i class="fa-solid fa-chart-line"></i></div>
+                    </div>
+                    <div class="stat-value" id="kpiNetProfit">0.00 ج.م</div>
+                    <div class="stat-sub" id="kpiProfitMargin">هامش ربح: 0%</div>
+                </div>
+
+                <div class="stat-card card-amber">
+                    <div class="stat-header">
+                        <span class="stat-title">الأصناف بالمخزن</span>
+                        <div class="stat-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
+                    </div>
+                    <div class="stat-value" id="kpiTotalItemsCount">0</div>
+                    <div class="stat-sub" id="kpiRemainingPieces">المتبقي: 0 قطعة</div>
+                </div>
+
+                <div class="stat-card card-rose">
+                    <div class="stat-header">
+                        <span class="stat-title">تنبيه النواقص</span>
+                        <div class="stat-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                    </div>
+                    <div class="stat-value" id="kpiLowStockCount">0</div>
+                    <div class="stat-sub">أصناف أوشكت على النفاد</div>
+                </div>
+            </section>
+
             <div class="analytics-grid">
                 <!-- Supplier breakdown card -->
                 <div class="analytics-card">
