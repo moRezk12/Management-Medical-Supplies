@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ميديكال كير | نظام إدارة المستلزمات الطبية والأرباح</title>
+    <!-- Google Fonts: Cairo -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Main Style -->
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-notes-medical"></i>
+                </div>
+                <div class="brand-text">
+                    <h1>ميديكال كير <span class="badge-pro">PRO</span></h1>
+                    <p>نظام ذكي وشامل لإدارة مخزن ومحل المستلزمات الطبية، المبيعات والأرباح</p>
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <button class="btn btn-primary" id="btnOpenAddModal">
+                    <i class="fa-solid fa-plus-circle"></i>
+                    <span>إضافة بضاعة جديدة</span>
+                </button>
+                <button class="btn btn-secondary" id="btnExportData" title="تصدير نسخة احتياطية إكسيل / ملف">
+                    <i class="fa-solid fa-file-excel"></i>
+                    <span>تصدير البيانات</span>
+                </button>
+                <button class="btn btn-outline" id="btnPrintReport" title="طباعة تقرير الجرد والمبيعات">
+                    <i class="fa-solid fa-print"></i>
+                    <span>طباعة</span>
+                </button>
+                <button class="theme-toggle" id="themeToggle" title="تبديل الوضع الليلي / الفاتح">
+                    <i class="fa-solid fa-moon" id="themeIcon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-content">
+
+        <!-- Top Statistics / KPI Dashboard -->
+        <section class="stats-grid">
+            <div class="stat-card card-blue">
+                <div class="stat-header">
+                    <span class="stat-title">إجمالي المشتريات</span>
+                    <div class="stat-icon"><i class="fa-solid fa-cart-shopping"></i></div>
+                </div>
+                <div class="stat-value" id="kpiTotalPurchases">0.00 ج.م</div>
+                <div class="stat-sub">تكلفة البضاعة في المخزن</div>
+            </div>
+
+            <div class="stat-card card-purple">
+                <div class="stat-header">
+                    <span class="stat-title">إجمالي المبيعات المحققة</span>
+                    <div class="stat-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+                </div>
+                <div class="stat-value" id="kpiTotalSales">0.00 ج.م</div>
+                <div class="stat-sub" id="kpiTotalSoldUnits">باعت 0 قطعة حتى الآن</div>
+            </div>
+
+            <div class="stat-card card-green" id="kpiProfitCard">
+                <div class="stat-header">
+                    <span class="stat-title">صافي الأرباح المحققة</span>
+                    <div class="stat-icon"><i class="fa-solid fa-chart-line"></i></div>
+                </div>
+                <div class="stat-value" id="kpiNetProfit">0.00 ج.م</div>
+                <div class="stat-sub" id="kpiProfitMargin">هامش ربح: 0%</div>
+            </div>
+
+            <div class="stat-card card-amber">
+                <div class="stat-header">
+                    <span class="stat-title">الأصناف بالمخزن</span>
+                    <div class="stat-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
+                </div>
+                <div class="stat-value" id="kpiTotalItemsCount">0</div>
+                <div class="stat-sub" id="kpiRemainingPieces">المتبقي: 0 قطعة</div>
+            </div>
+
+            <div class="stat-card card-rose">
+                <div class="stat-header">
+                    <span class="stat-title">تنبيه النواقص</span>
+                    <div class="stat-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                </div>
+                <div class="stat-value" id="kpiLowStockCount">0</div>
+                <div class="stat-sub">أصناف أوشكت على النفاد</div>
+            </div>
+        </section>
+
+        <!-- Main Navigation Tabs -->
+        <div class="tabs-nav">
+            <button class="tab-btn active" data-tab="tab-inventory">
+                <i class="fa-solid fa-warehouse"></i>
+                <span>دفتر المخزن والبضاعة الحالية</span>
+                <span class="tab-badge" id="badgeInventoryCount">0</span>
+            </button>
+            <button class="tab-btn" data-tab="tab-sales">
+                <i class="fa-solid fa-receipt"></i>
+                <span>سجل المبيعات والأرباح التفصيلية</span>
+                <span class="tab-badge" id="badgeSalesCount">0</span>
+            </button>
+            <button class="tab-btn" data-tab="tab-analytics">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>تقرير الشركات والموردين والخصومات</span>
+            </button>
+        </div>
+
+        <!-- TAB 1: INVENTORY & STOCK MANAGEMENT -->
+        <section class="tab-pane active" id="tab-inventory">
+            <!-- Filter & Search Toolbar -->
+            <div class="toolbar">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="searchInput" placeholder="ابحث باسم الصنف، كود المنتج، أو اسم الشركة الموردة...">
+                    <button id="clearSearchBtn" class="clear-btn" title="مسح البحث">&times;</button>
+                </div>
+
+                <div class="filters-group">
+                    <select id="filterCompany" class="form-select">
+                        <option value="">جميع الشركات الموردة</option>
+                    </select>
+
+                    <select id="filterStatus" class="form-select">
+                        <option value="all">كل حالات المخزون</option>
+                        <option value="available">متوفر في المخزن</option>
+                        <option value="low">قارب على النفاد (&le; 5 قطع)</option>
+                        <option value="out">نفد من المخزن (0)</option>
+                    </select>
+
+                    <select id="sortBy" class="form-select">
+                        <option value="date-desc">الأحدث إضافة</option>
+                        <option value="date-asc">الأقدم تاريخاً</option>
+                        <option value="profit-desc">الأعلى في نسبة الربح</option>
+                        <option value="qty-desc">الأعلى كمية متوفرة</option>
+                        <option value="qty-asc">الأقل كمية (نواقص)</option>
+                        <option value="name-asc">ترتيب أبجدي (أ - ي)</option>
+                    </select>
+
+                    <button class="btn btn-secondary-subtle" id="btnResetDataPrompt" title="إعادة تعيين أو تحميل بيانات تجريبية">
+                        <i class="fa-solid fa-arrows-rotate"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Inventory Data Table -->
+            <div class="table-card">
+                <div class="table-responsive">
+                    <table class="data-table" id="inventoryTable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>اسم الصنف الطبي</th>
+                                <th>الشركة / المورد</th>
+                                <th>تاريخ الشراء</th>
+                                <th>الكمية المشتراة</th>
+                                <th>المباع</th>
+                                <th>المتبقي بالمخزن</th>
+                                <th>سعر الشراء</th>
+                                <th>سعر البيع الأصلي</th>
+                                <th>الخصم</th>
+                                <th>سعر البيع الفعلي</th>
+                                <th>ربح القطعة الواحدة</th>
+                                <th>إجمالي الربح المتوقع</th>
+                                <th>حالة المخزون</th>
+                                <th class="text-center actions-col">إجراءات سريعة</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTableBody">
+                            <!-- Populated dynamically via JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Empty State -->
+                <div class="empty-state" id="inventoryEmptyState" style="display: none;">
+                    <div class="empty-icon"><i class="fa-solid fa-box-open"></i></div>
+                    <h3>لا توجد بضاعة مطابقة للبحث</h3>
+                    <p>قم بتغيير خيارات البحث أو أضف أصناف جديدة إلى الدفتر الآن</p>
+                    <button class="btn btn-primary" onclick="openAddModal()">
+                        <i class="fa-solid fa-plus"></i> إضافة بضاعة الآن
+                    </button>
+                </div>
+
+                <!-- Table Footer Summary -->
+                <div class="table-footer" id="inventoryTableFooter">
+                    <div class="footer-stat">
+                        <span>إجمالي الأصناف المعروضة:</span>
+                        <strong id="footerItemsCount">0</strong>
+                    </div>
+                    <div class="footer-stat">
+                        <span>قيمة بضاعة المخزن المعروضة:</span>
+                        <strong id="footerTotalStockValue">0.00 ج.م</strong>
+                    </div>
+                    <div class="footer-stat">
+                        <span>إجمالي الأرباح المتوقعة:</span>
+                        <strong class="text-success" id="footerTotalExpectedProfit">0.00 ج.م</strong>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: DETAILED SALES & REVENUE LOG -->
+        <section class="tab-pane" id="tab-sales">
+            <div class="sales-banner">
+                <div class="banner-info">
+                    <h2><i class="fa-solid fa-cash-register"></i> سجل عمليات البيع والأرباح الفورية</h2>
+                    <p>كل عملية بيع تسجل هنا بتفاصيل سعر الشراء، سعر البيع بعد الخصم، وصافي المكسب أو الخسارة المحققة.</p>
+                </div>
+                <div class="banner-actions">
+                    <button class="btn btn-primary" id="btnQuickSellNew">
+                        <i class="fa-solid fa-plus"></i> تسجيل عملية بيع جديدة
+                    </button>
+                    <button class="btn btn-danger-subtle" id="btnClearSalesLog">
+                        <i class="fa-solid fa-trash"></i> مسح سجل المبيعات
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sales Table -->
+            <div class="table-card">
+                <div class="table-responsive">
+                    <table class="data-table" id="salesTable">
+                        <thead>
+                            <tr>
+                                <th>رقم الإيصال</th>
+                                <th>تاريخ البيع</th>
+                                <th>اسم الصنف</th>
+                                <th>الشركة الموردة</th>
+                                <th>الكمية المباعة</th>
+                                <th>سعر الشراء للقطعة</th>
+                                <th>سعر البيع المعتمد</th>
+                                <th>الخصم الممنوح</th>
+                                <th>سعر البيع الصافي</th>
+                                <th>إجمالي قيمة الفاتورة</th>
+                                <th>صافي الربح / الخسارة</th>
+                                <th>نسبة الربح</th>
+                                <th>العميل / ملاحظات</th>
+                                <th class="text-center">إلغاء البيع</th>
+                            </tr>
+                        </thead>
+                        <tbody id="salesTableBody">
+                            <!-- Populated dynamically via JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="empty-state" id="salesEmptyState" style="display: none;">
+                    <div class="empty-icon"><i class="fa-solid fa-receipt"></i></div>
+                    <h3>لم يتم تسجيل أي عمليات بيع بعد</h3>
+                    <p>اضغط على زر "بيع" بجانب أي صنف في المخزن أو سجل عملية بيع الآن</p>
+                </div>
+
+                <div class="table-footer">
+                    <div class="footer-stat">
+                        <span>إجمالي عدد الفواتير:</span>
+                        <strong id="salesFooterCount">0</strong>
+                    </div>
+                    <div class="footer-stat">
+                        <span>إجمالي مبالغ المبيعات:</span>
+                        <strong class="text-primary" id="salesFooterRevenue">0.00 ج.م</strong>
+                    </div>
+                    <div class="footer-stat">
+                        <span>إجمالي الأرباح الصافية المحققة:</span>
+                        <strong class="text-success" id="salesFooterProfit">0.00 ج.م</strong>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: SUPPLIERS & PERFORMANCE ANALYTICS -->
+        <section class="tab-pane" id="tab-analytics">
+            <div class="analytics-grid">
+                <!-- Supplier breakdown card -->
+                <div class="analytics-card">
+                    <div class="card-title">
+                        <i class="fa-solid fa-building-shield"></i>
+                        <h3>تقرير الشركات والموردين</h3>
+                    </div>
+                    <p class="card-desc">تحليل حجم البضاعة، المبيعات والأرباح المحققة لكل شركة موردة</p>
+                    <div class="table-responsive">
+                        <table class="mini-table">
+                            <thead>
+                                <tr>
+                                    <th>اسم الشركة</th>
+                                    <th>عدد الأصناف</th>
+                                    <th>قيمة المشتريات</th>
+                                    <th>قيمة المبيعات</th>
+                                    <th>الأرباح الصافية</th>
+                                </tr>
+                            </thead>
+                            <tbody id="companyAnalyticsBody">
+                                <!-- Dynamic -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Top profitable items -->
+                <div class="analytics-card">
+                    <div class="card-title">
+                        <i class="fa-solid fa-trophy"></i>
+                        <h3>الأصناف الأكثر ربحية</h3>
+                    </div>
+                    <p class="card-desc">أعلى مستلزمات طبية تحقق لك أرباحاً صافية في المحل</p>
+                    <div class="top-items-list" id="topProfitableList">
+                        <!-- Dynamic -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL: ADD / EDIT PRODUCT -->
+    <div class="modal-backdrop" id="productModal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <i class="fa-solid fa-box-archive" id="modalHeaderIcon"></i>
+                    <h3 id="productModalTitle">إضافة بضاعة جديدة للدفتر</h3>
+                </div>
+                <button class="modal-close-btn" id="btnCloseProductModal">&times;</button>
+            </div>
+
+            <form id="productForm">
+                <input type="hidden" id="editProductId" value="">
+
+                <div class="modal-body">
+                    <!-- Quick Presets for Medical Store -->
+                    <div class="quick-tags-section">
+                        <label class="form-label-sm">اقتراحات سريعة لمستلزمات طبية شهيرة:</label>
+                        <div class="tags-container">
+                            <button type="button" class="tag-btn" data-name="سرنجات 3 سم معقمة (علبة 100)" data-company="شركة إيجي ميد" data-buy="110" data-sell="150" data-discount="5">سرنجات 3 سم</button>
+                            <button type="button" class="tag-btn" data-name="كانيولا وريدية مقاس 20 زرقاء" data-company="ألترا ميديكال" data-buy="18" data-sell="30" data-discount="0">كانيولا زرقاء</button>
+                            <button type="button" class="tag-btn" data-name="جوانتي فحص لاتكس طبي (علبة 100)" data-company="فارما توب" data-buy="140" data-sell="200" data-discount="10">جوانتي لاتكس</button>
+                            <button type="button" class="tag-btn" data-name="كحول إيثيلي 70% طبي 1 لتر" data-company="النيل للكيماويات" data-buy="45" data-sell="70" data-discount="0">كحول 70%</button>
+                            <button type="button" class="tag-btn" data-name="شاش طبي معقم 10 سم" data-company="المهن الطبية" data-buy="25" data-sell="40" data-discount="2">شاش طبي</button>
+                            <button type="button" class="tag-btn" data-name="جهاز قياس ضغط الدم ديجيتال" data-company="بيورير الألمانية" data-buy="650" data-sell="950" data-discount="50">جهاز ضغط</button>
+                            <button type="button" class="tag-btn" data-name="شرايط قياس سكر (علبة 50)" data-company="روش للرعاية الطبية" data-buy="220" data-sell="300" data-discount="15">شرايط سكر</button>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <!-- Item Name -->
+                        <div class="form-group col-span-2">
+                            <label for="inputName" class="form-label required">اسم الصنف أو المستلزم الطبي</label>
+                            <div class="input-with-icon">
+                                <i class="fa-solid fa-stethoscope"></i>
+                                <input type="text" id="inputName" class="form-control" placeholder="مثال: سرنجات 5 سم، كانيولا صفراء، قطن طبي 500 جم..." required>
+                            </div>
+                        </div>
+
+                        <!-- Company / Supplier -->
+                        <div class="form-group">
+                            <label for="inputCompany" class="form-label required">اسم الشركة / المورد</label>
+                            <div class="input-with-icon">
+                                <i class="fa-solid fa-truck-field"></i>
+                                <input type="text" id="inputCompany" class="form-control" placeholder="مثال: شركة النيل، إيجي فارما..." required>
+                            </div>
+                        </div>
+
+                        <!-- Purchase Date -->
+                        <div class="form-group">
+                            <label for="inputDate" class="form-label required">تاريخ الشراء / التوريد</label>
+                            <div class="input-with-icon">
+                                <i class="fa-solid fa-calendar-days"></i>
+                                <input type="date" id="inputDate" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <!-- Quantity / Count -->
+                        <div class="form-group">
+                            <label for="inputQty" class="form-label required">العدد (الكمية المشتراة)</label>
+                            <div class="input-with-icon">
+                                <i class="fa-solid fa-arrow-down-9-1"></i>
+                                <input type="number" id="inputQty" class="form-control" min="1" step="1" placeholder="مثال: 50" required>
+                            </div>
+                            <span class="field-hint">عدد العلب أو الباكتات أو القطع</span>
+                        </div>
+
+                        <!-- Pieces per Unit / Package (optional) -->
+                        <div class="form-group">
+                            <label for="inputPiecesPerPack" class="form-label">عدد القطع داخل العبوة (اختياري)</label>
+                            <div class="input-with-icon">
+                                <i class="fa-solid fa-table-cells-large"></i>
+                                <input type="number" id="inputPiecesPerPack" class="form-control" min="1" step="1" placeholder="مثال: 100 قطعة بالعلبة">
+                            </div>
+                        </div>
+
+                        <!-- Purchase Price -->
+                        <div class="form-group">
+                            <label for="inputBuyPrice" class="form-label required">سعر الشراء للوحدة (ج.م)</label>
+                            <div class="input-with-icon">
+                                <i class="fa-solid fa-receipt"></i>
+                                <input type="number" id="inputBuyPrice" class="form-control" min="0" step="0.25" placeholder="0.00" required>
+                            </div>
+                            <span class="field-hint">السعر الذي اشتريت به من المورد</span>
+                        </div>
+
+                        <!-- Selling Price -->
+                        <div class="form-group">
+                            <label for="inputSellPrice" class="form-label required">سعر البيع للجمهور (ج.م)</label>
+                            <div class="input-with-icon">
+                                <i class="fa-solid fa-tag"></i>
+                                <input type="number" id="inputSellPrice" class="form-control" min="0" step="0.25" placeholder="0.00" required>
+                            </div>
+                            <span class="field-hint">السعر الرسمي للبيع قبل الخصم</span>
+                        </div>
+
+                        <!-- Discount -->
+                        <div class="form-group">
+                            <label for="inputDiscount" class="form-label">الخصم الممنوح (ج.م)</label>
+                            <div class="input-with-icon">
+                                <i class="fa-solid fa-percent"></i>
+                                <input type="number" id="inputDiscount" class="form-control" min="0" step="0.25" value="0" placeholder="0.00">
+                            </div>
+                            <span class="field-hint">قيمة الخصم بالجنيه لكل وحدة</span>
+                        </div>
+
+                        <!-- Category / Notes -->
+                        <div class="form-group">
+                            <label for="inputNotes" class="form-label">ملاحظات / رقم الرف أو التشغيلة</label>
+                            <div class="input-with-icon">
+                                <i class="fa-solid fa-bookmark"></i>
+                                <input type="text" id="inputNotes" class="form-control" placeholder="رقم الرف، كود، تاريخ صلاحية...">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Live Calculation Card -->
+                    <div class="live-calc-box">
+                        <div class="calc-row">
+                            <div class="calc-item">
+                                <span class="calc-label">سعر البيع الفعلي (بعد الخصم):</span>
+                                <span class="calc-num text-primary" id="calcNetSellPrice">0.00 ج.م</span>
+                            </div>
+                            <div class="calc-item">
+                                <span class="calc-label">صافي ربح القطعة الواحدة:</span>
+                                <span class="calc-num text-success" id="calcUnitProfit">0.00 ج.م</span>
+                            </div>
+                            <div class="calc-item">
+                                <span class="calc-label">إجمالي تكلفة الشراء:</span>
+                                <span class="calc-num" id="calcTotalCost">0.00 ج.م</span>
+                            </div>
+                            <div class="calc-item">
+                                <span class="calc-label">إجمالي الربح المتوقع للكمية:</span>
+                                <span class="calc-num text-success" id="calcTotalProfit">0.00 ج.م</span>
+                            </div>
+                        </div>
+                        <div id="calcWarningAlert" class="calc-alert-loss" style="display: none;">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            <span>تنبيه: سعر البيع بعد الخصم أقل من سعر الشراء! أنت معرض لخسارة <strong id="calcLossAmount">0</strong> ج.م في القطعة!</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" id="btnCancelProductModal">إلغاء</button>
+                    <button type="submit" class="btn btn-primary" id="btnSaveProduct">
+                        <i class="fa-solid fa-check"></i>
+                        <span>حفظ الصنف في الدفتر</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: QUICK SELL ITEM -->
+    <div class="modal-backdrop" id="sellModal">
+        <div class="modal-dialog modal-dialog-sm">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <i class="fa-solid fa-hand-holding-dollar"></i>
+                    <h3>تسجيل عملية بيع</h3>
+                </div>
+                <button class="modal-close-btn" id="btnCloseSellModal">&times;</button>
+            </div>
+
+            <form id="sellForm">
+                <input type="hidden" id="sellProductId" value="">
+
+                <div class="modal-body">
+                    <div class="product-summary-card">
+                        <h4 id="sellModalProductName">اسم الصنف الطبي</h4>
+                        <div class="summary-details">
+                            <div>الشركة: <strong id="sellModalCompany">-</strong></div>
+                            <div>المتوفر بالمخزن: <strong class="badge-stock" id="sellModalAvailableQty">0</strong></div>
+                            <div>سعر الشراء: <strong id="sellModalBuyPrice">0.00 ج.م</strong></div>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group col-span-2">
+                            <label for="sellQty" class="form-label required">الكمية المراد بيعها</label>
+                            <div class="input-with-icon">
+                                <i class="fa-solid fa-cart-arrow-down"></i>
+                                <input type="number" id="sellQty" class="form-control" min="1" step="1" value="1" required>
+                            </div>
+                            <span class="field-hint" id="sellMaxQtyHint">الحد الأقصى المتوفر: 0</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="sellUnitPrice" class="form-label required">سعر بيع الوحدة (ج.م)</label>
+                            <input type="number" id="sellUnitPrice" class="form-control" min="0" step="0.25" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="sellDiscount" class="form-label">خصم خاص للعميل (ج.م)</label>
+                            <input type="number" id="sellDiscount" class="form-control" min="0" step="0.25" value="0">
+                        </div>
+
+                        <div class="form-group col-span-2">
+                            <label for="sellCustomer" class="form-label">اسم العميل / المستشفى / الدكتور (اختياري)</label>
+                            <input type="text" id="sellCustomer" class="form-control" placeholder="مثال: د. أحمد / عيادة النور / عميل نقدي">
+                        </div>
+                    </div>
+
+                    <!-- Instant Profit preview for this sale -->
+                    <div class="sell-profit-preview">
+                        <div class="profit-row">
+                            <span>إجمالي الفاتورة المدفوع:</span>
+                            <strong class="text-primary" id="sellTotalBill">0.00 ج.م</strong>
+                        </div>
+                        <div class="profit-row">
+                            <span>إجمالي تكلفة هذه الكمية:</span>
+                            <span id="sellTotalCost">0.00 ج.م</span>
+                        </div>
+                        <div class="profit-row highlight">
+                            <span id="sellProfitLabel">صافي الربح من هذه البيعة:</span>
+                            <strong class="text-success" id="sellNetProfit">0.00 ج.م</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" id="btnCancelSellModal">إلغاء</button>
+                    <button type="submit" class="btn btn-success" id="btnConfirmSell">
+                        <i class="fa-solid fa-check-double"></i>
+                        <span>إتمام عملية البيع وتحديث المخزن</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Application Script -->
+    <script src="style.js"></script>
+</body>
+</html>
